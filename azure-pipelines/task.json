@@ -14,7 +14,7 @@
   "version": {
     "Major": 0,
     "Minor": 0,
-    "Patch": 11
+    "Patch": 1
   },
   "instanceNameFormat": "ABCD Lite deploy $(site_name)",
   "inputs": [

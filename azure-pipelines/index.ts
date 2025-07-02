@@ -41,7 +41,7 @@ async function run() {
 
     let payload: any = { ...configVars };
     if (project_id) payload.project_id = project_id;
-    if (deployment_token) payload.api_key  = deployment_token;
+    if (deployment_token) payload.deploy_key  = deployment_token;
     if (site_name) payload.site_name = site_name;
     if (stop_app_pool_before_deploy !== undefined) payload.stop_app_pool_before_deploy = stop_app_pool_before_deploy;
     if (start_app_pool_after_deploy !== undefined) payload.start_app_pool_after_deploy = start_app_pool_after_deploy;
@@ -52,7 +52,7 @@ async function run() {
     if (!fs.existsSync(configFullPath)) {
       payload = {};
       if (project_id) payload.project_id = project_id;
-      if (deployment_token) payload.api_key = deployment_token;
+      if (deployment_token) payload.deploy_key = deployment_token;
       if (site_name) payload.site_name = site_name;
       if (stop_app_pool_before_deploy !== undefined) payload.stop_app_pool_before_deploy = stop_app_pool_before_deploy;
       if (start_app_pool_after_deploy !== undefined) payload.start_app_pool_after_deploy = start_app_pool_after_deploy;

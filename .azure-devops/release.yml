@@ -1,0 +1,80 @@
+trigger:
+  branches:
+    exclude:
+      - "*"
+  tags:
+    include:
+      - "*"
+# pool:
+#   vmImage: "ubuntu-latest"
+pool: 
+ name: selfhosted
+
+variables:
+  - group: ABCDLite-action
+  - name: serviceConnection
+    value: vs-marketplace
+
+stages:
+  - stage: BuildExtension
+    jobs:
+      - job: Build
+        steps:
+          - task: UseNode@1
+            inputs:
+              version: 22
+            displayName: 'Install Node.js'
+          - task: TfxInstaller@4
+            inputs:
+              version: "0.x"
+          - task: Npm@1
+            inputs:
+              command: 'install'
+              workingDir: 'azure-pipelines'
+          - task: Npm@1
+            inputs:
+              command: 'custom'
+              workingDir: 'azure-pipelines'
+              customCommand: 'run build'
+          - task: QueryAzureDevOpsExtensionVersion@4
+            name: QueryVersion
+            inputs:
+              connectTo: 'VsTeam'
+              connectedServiceName: '$(serviceConnection)'
+              publisherId: '$(PublisherID)'
+              extensionId: '$(ExtensionID)'
+              versionAction: 'Patch'
+          - task: PackageAzureDevOpsExtension@4
+            inputs:
+              rootFolder: '$(System.DefaultWorkingDirectory)'
+              publisherId: '$(PublisherID)'
+              extensionId: '$(ExtensionID)'
+              extensionName: '$(ExtensionName)'
+              extensionVersion: '$(QueryVersion.Extension.Version)'
+              updateTasksVersion: true
+              updateTasksVersionType: 'patch'
+              extensionVisibility: 'public'
+              extensionPricing: 'free'
+          - task: PublishAzureDevOpsExtension@4
+            inputs:
+              connectTo: 'VsTeam'
+              connectedServiceName: '$(serviceConnection)'
+              fileType: 'vsix'
+              vsixFile: '$(PublisherID).$(ExtensionID)-$(QueryVersion.Extension.Version).vsix'
+              publisherId: '$(PublisherID)'
+              extensionId: '$(ExtensionID)'
+              extensionName: '$(ExtensionName)'
+              updateTasksVersion: false
+              extensionVisibility: 'public'
+              extensionPricing: 'free'
+          - task: CopyFiles@2
+            displayName: "Copy Files to: $(Build.ArtifactStagingDirectory)"
+            inputs:
+              Contents: "**/*.vsix"
+              TargetFolder: "$(Build.ArtifactStagingDirectory)"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: '$(ArtifactName)'
+              publishLocation: 'Container'
+

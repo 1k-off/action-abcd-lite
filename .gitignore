@@ -5,3 +5,4 @@ lib/
 .vscode/
 *.vsix 
 localrun.js
+.taskkey
