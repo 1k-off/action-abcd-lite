@@ -1,0 +1,45 @@
+{
+  "manifestVersion": 1,
+  "id": "abcd-lite",
+  "name": "ABCD Lite",
+  "version": "0.0.11",
+  "publisher": "1node",
+  "targets": [
+      {
+          "id": "Microsoft.VisualStudio.Services"
+      }
+  ],    
+  "description": "ABCD Lite task for Azure Pipelines",
+  "categories": [
+      "Azure Pipelines"
+  ],
+  "icons": {
+      "default": "images/logo.png"        
+  },
+  "tags": [
+    "abcd-lite",
+    "deploy",
+    "iis"
+  ],
+  "files": [
+      {
+        "path": "azure-pipelines"
+      },
+      {
+        "path": "images",
+        "addressable": true
+      }
+  ],
+  "contributions": [
+      {
+          "id": "abcd-lite",
+          "type": "ms.vss-distributed-task.task",
+          "targets": [
+              "ms.vss-distributed-task.tasks"
+          ],
+          "properties": {
+              "name": "azure-pipelines"
+          }
+      }
+  ]
+}

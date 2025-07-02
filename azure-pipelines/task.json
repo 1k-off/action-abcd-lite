@@ -1,0 +1,121 @@
+{
+  "id": "67832708-b31d-4236-a493-5c934a85d274",
+  "name": "ABCDLiteDeploy",
+  "friendlyName": "ABCD Lite deploy",
+  "description": "Deploy IIS sites with ABCD Lite.",
+  "helpMarkDown": "ABCD Lite is a tool for deploying IIS sites.",
+  "category": "Deploy",
+  "author": "Bogdan Kosarevskyi [1node]",
+  "visibility": [
+    "Build",
+    "Release"
+  ],
+  "minimumAgentVersion": "3.224.0",
+  "version": {
+    "Major": 0,
+    "Minor": 0,
+    "Patch": 11
+  },
+  "instanceNameFormat": "ABCD Lite deploy $(site_name)",
+  "inputs": [
+    {
+      "name": "abcdlite_url",
+      "type": "string",
+      "label": "ABCD Lite URL. Example: https://abcd-lite.acme.com",
+      "required": true,
+      "helpMarkDown": "ABCD Lite URL. Example: https://abcd-lite.acme.com"
+    },
+    {
+      "name": "package_username",
+      "type": "string",
+      "label": "Package Registry Username",
+      "required": false,
+      "helpMarkDown": "Username for authenticating to the package registry."
+    },
+    {
+      "name": "package_password",
+      "type": "string",
+      "label": "Package Registry Password",
+      "required": false,
+      "helpMarkDown": "Password for authenticating to the package registry."
+    },
+    {
+      "name": "package_ref",
+      "type": "string",
+      "label": "Package Reference. Example: docker.io/acme/my-app:v1.0.0",
+      "required": true,
+      "helpMarkDown": "Package reference to deploy. Example: docker.io/acme/my-app:v1.0.0"
+    },
+    {
+      "name": "config_path",
+      "type": "string",
+      "label": "Config File Path from repo root. Example: .abcd-lite.yml",
+      "defaultValue": ".abcd-lite.yml",
+      "required": false,
+      "helpMarkDown": "Config file path from repo root. Example: .abcd-lite.yml"
+    },
+    {
+      "name": "project_id",
+      "type": "string",
+      "label": "Project ID",
+      "required": false,
+      "helpMarkDown": "Project identifier for deployment (overrides config file if set)."
+    },
+    {
+      "name": "deployment_token",
+      "type": "string",
+      "label": "Deployment Token",
+      "required": false,
+      "helpMarkDown": "Deployment token for authentication (overrides config file if set)."
+    },
+    {
+      "name": "site_name",
+      "type": "string",
+      "label": "Site Name",
+      "required": false,
+      "helpMarkDown": "IIS site name to deploy to (overrides config file if set)."
+    },
+    {
+      "name": "stop_app_pool_before_deploy",
+      "type": "boolean",
+      "label": "Stop App Pool Before Deploy",
+      "required": false,
+      "helpMarkDown": "Stop the app pool before deployment (overrides config file if set).",
+      "defaultValue": true
+    },
+    {
+      "name": "start_app_pool_after_deploy",
+      "type": "boolean",
+      "label": "Start App Pool After Deploy",
+      "required": false,
+      "helpMarkDown": "Start the app pool after deployment (overrides config file if set).",
+      "defaultValue": true
+    },
+    {
+      "name": "clean_deployment",
+      "type": "boolean",
+      "label": "Clean Deployment",
+      "required": false,
+      "helpMarkDown": "Clean the deployment directory before deploying (overrides config file if set).",
+      "defaultValue": true
+    },
+    {
+      "name": "exclude",
+      "type": "multiLine",
+      "label": "Exclude List",
+      "required": false,
+      "helpMarkDown": "List of files or directories to exclude from deployment, one per line (overrides config file if set)."
+    }
+  ],
+  "execution": {
+    "Node16": {
+      "target": "lib/index.js"
+    },
+    "Node20": {
+      "target": "lib/index.js"
+    },
+    "Node22": {
+      "target": "lib/index.js"
+    }
+  }
+} 
