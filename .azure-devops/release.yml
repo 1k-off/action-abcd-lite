@@ -5,10 +5,8 @@ trigger:
   tags:
     include:
       - "*"
-# pool:
-#   vmImage: "ubuntu-latest"
-pool: 
- name: selfhosted
+pool:
+  vmImage: "ubuntu-latest"
 
 variables:
   - group: ABCDLite-action

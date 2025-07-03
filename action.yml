@@ -1,6 +1,9 @@
 name: 'ABCD Lite'
 description: 'Deploy IIS sites with ABCD Lite.'
 author: 'Bogdan Kosarevskyi [1node]'
+branding:
+  icon: 'upload-cloud'
+  color: 'white'
 inputs:
   abcdlite_url:
     description: 'ABCD Lite URL. Example: https://abcd-lite.acme.com'
