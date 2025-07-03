@@ -46,7 +46,7 @@ Create variable group and store sensitive values like `api_key` there.
     abcdlite_url: 'https://abcd-lite.acme.com'
     package_username: '$(DockerHubUsername)'
     package_password: '$(DockerHubToken)'
-    package_ref: 'docker.io/kosar/test-html-artifact:v1.0.1'
+    package_ref: 'docker.io/acme/artifact:v1.0.1'
     project_id: '000000000000000'
     deployment_token: '$(ABCDLiteDeployToken)'
     site_name: 'example.acme.com'

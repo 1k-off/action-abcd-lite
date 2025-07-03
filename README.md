@@ -30,6 +30,89 @@ exclude:                            # (list) List of files or directories to exc
   - "test2"
 ```
 
+## GitHub Actions
+
+Store sensitive values like `deployment_token` and `package_password` in GitHub Secrets.
+
+**Example workflow:**
+```yaml
+      - name: Deploy IIS site with ABCD Lite
+        uses: 1k-off/action-abcd-lite@v1
+        with:
+          abcdlite_url: 'https://abcd-lite.acme.com'
+          package_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          package_password: ${{ secrets.DOCKERHUB_TOKEN }}
+          package_ref: 'docker.io/acme/artifact:v1.0.1'
+          project_id: '000000000000000'
+          deployment_token: ${{ secrets.ABCDLITE_DEPLOY_TOKEN }}
+          site_name: 'example.acme.com'
+          exclude: |
+            media
+            pdf
+            some/dir/to/keep
+```
+
+**Extended example with artifact push and versioning**
+```yaml
+name: Deploy with ABCD Lite
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set version
+        id: version
+        run: |
+          ver="$(date +%Y%m%d-%H%M)"
+          echo "version=$ver" >> $GITHUB_OUTPUT
+
+      # some build actions (node, dotnet, go, etc)
+
+      # Install ORAS CLI using the official action
+      - uses: oras-project/setup-oras@v1
+        with:
+          version: 1.2.3
+      # Push artifacts using ORAS
+      - name: Push Artifact
+        uses: 1k-off/action-oras-push@v1
+        with:
+          registry: docker.io
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+          repository: acme/artifact
+          tag: ${{ steps.version.outputs.version }}
+          files: |
+            dist/
+            index.html
+          manifest-annotations: "key1=value1,key2=value2"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy IIS site with ABCD Lite
+        uses: 1k-off/action-abcd-lite@v1
+        with:
+          abcdlite_url: 'https://abcd-lite.acme.com'
+          package_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          package_password: ${{ secrets.DOCKERHUB_TOKEN }}
+          package_ref: 'docker.io/acme/artifact:${{ needs.build.outputs.version }}'
+          project_id: '000000000000000'
+          deployment_token: ${{ secrets.ABCDLITE_DEPLOY_TOKEN }}
+          site_name: 'example.acme.com'
+          exclude: |
+            media
+            pdf
+            some/dir/to/keep
+```
+
+
 ## Azure DevOps
 
 Create variable group and store sensitive values like `api_key` there.
@@ -41,7 +124,7 @@ Create variable group and store sensitive values like `api_key` there.
     abcdlite_url: 'https://abcd-lite.acme.com'
     package_username: '$(DockerHubUsername)'
     package_password: '$(DockerHubToken)'
-    package_ref: 'docker.io/kosar/test-html-artifact:v1.0.1'
+    package_ref: 'docker.io/acme/artifact:v1.0.1'
     project_id: '000000000000000'
     deployment_token: '$(ABCDLiteDeployToken)'
     site_name: 'example.acme.com'

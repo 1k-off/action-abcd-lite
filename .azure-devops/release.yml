@@ -16,51 +16,63 @@ variables:
     value: vs-marketplace
 
 stages:
-  - stage: BuildExtension
+  - stage: Release
+    displayName: 'Build Extension'
     jobs:
-      - job: Build
+      - job: BuildAndRelease
+        displayName: 'Build and Release'
         steps:
           - task: UseNode@1
+            displayName: 'Install Node.js'
             inputs:
               version: 22
-            displayName: 'Install Node.js'
           - task: TfxInstaller@4
+            displayName: 'Install Tfx'
             inputs:
               version: "0.x"
           - task: Npm@1
+            displayName: 'Install dependencies'
             inputs:
               command: 'install'
               workingDir: 'azure-pipelines'
           - task: Npm@1
+            displayName: 'Build'
             inputs:
               command: 'custom'
               workingDir: 'azure-pipelines'
               customCommand: 'run build'
-          - task: QueryAzureDevOpsExtensionVersion@4
-            name: QueryVersion
-            inputs:
-              connectTo: 'VsTeam'
-              connectedServiceName: '$(serviceConnection)'
-              publisherId: '$(PublisherID)'
-              extensionId: '$(ExtensionID)'
-              versionAction: 'Patch'
+          - script: |
+              TAG_NAME=$(Build.SourceBranchName)
+              VERSION=${TAG_NAME#v}
+              echo "##vso[task.setvariable variable=EXT_VERSION]$VERSION"
+            displayName: 'Set version from tag'
+          # - task: QueryAzureDevOpsExtensionVersion@4
+          #   name: QueryVersion
+          #   inputs:
+          #     connectTo: 'VsTeam'
+          #     connectedServiceName: '$(serviceConnection)'
+          #     publisherId: '$(PublisherID)'
+          #     extensionId: '$(ExtensionID)'
+          #     versionAction: 'Patch'
           - task: PackageAzureDevOpsExtension@4
+            displayName: 'Package Azure DevOps Extension'
             inputs:
               rootFolder: '$(System.DefaultWorkingDirectory)'
               publisherId: '$(PublisherID)'
               extensionId: '$(ExtensionID)'
               extensionName: '$(ExtensionName)'
-              extensionVersion: '$(QueryVersion.Extension.Version)'
+              extensionVersion: '$(EXT_VERSION)'
               updateTasksVersion: true
               updateTasksVersionType: 'patch'
               extensionVisibility: 'public'
               extensionPricing: 'free'
           - task: PublishAzureDevOpsExtension@4
+            displayName: 'Publish Azure DevOps Extension'
             inputs:
               connectTo: 'VsTeam'
               connectedServiceName: '$(serviceConnection)'
               fileType: 'vsix'
-              vsixFile: '$(PublisherID).$(ExtensionID)-$(QueryVersion.Extension.Version).vsix'
+              vsixFile: '$(PublisherID).$(ExtensionID)-$(EXT_VERSION).vsix'
               publisherId: '$(PublisherID)'
               extensionId: '$(ExtensionID)'
               extensionName: '$(ExtensionName)'
@@ -73,6 +85,7 @@ stages:
               Contents: "**/*.vsix"
               TargetFolder: "$(Build.ArtifactStagingDirectory)"
           - task: PublishBuildArtifacts@1
+            displayName: 'Publish Build Artifacts'
             inputs:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)'
               ArtifactName: '$(ArtifactName)'

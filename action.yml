@@ -1,0 +1,47 @@
+name: 'ABCD Lite'
+description: 'Deploy IIS sites with ABCD Lite.'
+author: 'Bogdan Kosarevskyi [1node]'
+inputs:
+  abcdlite_url:
+    description: 'ABCD Lite URL. Example: https://abcd-lite.acme.com'
+    required: true
+  package_username:
+    description: 'Username for authenticating to the package registry.'
+    required: false
+  package_password:
+    description: 'Password for authenticating to the package registry.'
+    required: false
+  package_ref:
+    description: 'Package reference to deploy. Example: docker.io/acme/my-app:v1.0.0'
+    required: true
+  config_path:
+    description: 'Config file path from repo root. Example: .abcd-lite.yml'
+    required: false
+    default: '.abcd-lite.yml'
+  project_id:
+    description: 'Project identifier for deployment (overrides config file if set).'
+    required: false
+  deployment_token:
+    description: 'Deployment token for authentication (overrides config file if set).'
+    required: false
+  site_name:
+    description: 'IIS site name to deploy to (overrides config file if set).'
+    required: false
+  stop_app_pool_before_deploy:
+    description: 'Stop the app pool before deployment (overrides config file if set).'
+    required: false
+    default: 'true'
+  start_app_pool_after_deploy:
+    description: 'Start the app pool after deployment (overrides config file if set).'
+    required: false
+    default: 'true'
+  clean_deployment:
+    description: 'Clean the deployment directory before deploying (overrides config file if set).'
+    required: false
+    default: 'true'
+  exclude:
+    description: 'List of files or directories to exclude from deployment, one per line (overrides config file if set).'
+    required: false
+runs:
+  using: 'node20'
+  main: 'gh-action/lib/index.js' 

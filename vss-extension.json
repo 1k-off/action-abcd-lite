@@ -37,6 +37,14 @@
       {
         "path": "overview.md",
         "addressable": true
+      },
+      {
+        "path": "LICENSE.md",
+        "addressable": true
+      },
+      {
+        "path": "README.md",
+        "addressable": true
       }
   ],
   "contributions": [
